@@ -4,6 +4,7 @@ import detailsofperson.Person;
 import java.util.*;
 
 public class AddressBook {
+	Scanner sc = new Scanner(System.in);
 	private List<Person> contactList;
 	AddressBook(){
 		contactList = new ArrayList<Person>();
@@ -55,20 +56,22 @@ public class AddressBook {
 		System.out.println("Contact removed successfully!");
 	}
 	private int search(String[] name) {
+		
 		for(int i=0; i<contactList.size(); i++) {
 			if(contactList.get(i).checkName(name)) {
-				Scanner sc = new Scanner(System.in);
+				
 				System.out.println("Is it the contact?");
 				System.out.println(contactList.get(i));
 				System.out.println("y/n?");
+				
 				char ch = sc.nextLine().charAt(0);
+				System.out.println(ch);
 				if(ch == 'y' || ch == 'Y') {
-					sc.close();
 					return i;
 				}
-				sc.close();
 			}
 		}
+	
 		return -1;
 	}
 	private int search(long phoneNumber) {
@@ -80,8 +83,10 @@ public class AddressBook {
 		return -1;
 	}
 	public void printBook() {
-		for(int i=0; i<contactList.size(); i++)
+		for(int i=0; i<contactList.size(); i++) {
 			System.out.println(contactList.get(i));
+			System.out.println();
+		}
 	}
 	public void print(String[] name) {
 		int atIndex = search(name);

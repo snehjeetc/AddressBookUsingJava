@@ -3,6 +3,7 @@ package detailsofperson;
 import java.util.Scanner;
 
 public class Address {
+	Scanner sc = new Scanner(System.in);
 	private int buildingNumber;
 	private String street;
 	private String city;
@@ -20,7 +21,6 @@ public class Address {
 	}
 	
 	public void modify() {
-		Scanner sc = new Scanner(System.in);
 		System.out.println("Change Building number (y/n)? ");
 		char ch = sc.nextLine().charAt(0);
 		if(ch == 'Y' || ch == 'y') {
@@ -49,10 +49,63 @@ public class Address {
 		System.out.println("Change the country name (y/n)?");
 		ch = sc.nextLine().charAt(0);
 		if(ch == 'Y' || ch == 'y') {
+			System.out.println("Enter the country name: ");
 			this.country = sc.nextLine();
 		}
-		sc.close();
+		System.out.println("Change the zip code(y/n)?");
+		ch = sc.nextLine().charAt(0);
+		if(ch == 'Y' || ch == 'y') {
+			System.out.println("Enter the new zip code: ");
+			this.zip = sc.nextInt();
+			sc.nextLine();
+		}
+		
 	}
+	
+	//Setters
+	//---------------------------------------------------
+	public void setStreet(String street) {
+		this.street = street;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
+	public void setState(String state) {
+		this.state = state;
+	}
+	public void setCountry(String country) {
+		this.country = country;
+	}
+	public void setZipCode(int zip) {
+		this.zip = zip;
+	}
+	public void setBuildingNumber(int buildingNumber) {
+		this.buildingNumber = buildingNumber;
+	}
+	//---------------------------------------------------
+	
+	// Getters
+	//---------------------------------------------------
+	public String getStreet() {
+		return street;
+	}
+	public String getCity() {
+		return city;
+	}
+	public String getState() {
+		return state;
+	}
+	public String getCountry() {
+		return country;
+	}
+	public int getZipCode() {
+		return zip;
+	}
+	public int getBuildingNumber() {
+		return buildingNumber;
+	}
+	//---------------------------------------------------
+	
 	public String toString() {
 		return "Building Number: " + buildingNumber + "\n"
 				+ "Street: " + street + "\n"
