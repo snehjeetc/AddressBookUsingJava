@@ -1,8 +1,7 @@
 package detailsofperson;
-import java.util.Scanner;
+import scannerwrapper.ScannerWrapped;
 
 public class Person {
-	Scanner sc = new Scanner(System.in);
 	private String firstName, lastName;
 	private long phoneNumber;
 	private String email;
@@ -18,38 +17,38 @@ public class Person {
 	}
 	public void modify() {
 		System.out.println("Change First Name (y/n)? ");
-		char ch = sc.nextLine().charAt(0);
+		char ch = ScannerWrapped.sc.nextLine().charAt(0);
 		if(ch == 'Y' || ch == 'y') {
 			System.out.println("Enter the first name: ");
-			this.firstName = sc.nextLine();
+			this.firstName = ScannerWrapped.sc.nextLine();
 		}
 		System.out.println("Change the last Name (y/n)?");
-		ch = sc.nextLine().charAt(0);
+		ch = ScannerWrapped.sc.nextLine().charAt(0);
 		if(ch == 'Y' || ch == 'y') {
 			System.out.println("Enter the last name: ");
-			this.lastName = sc.nextLine();
+			this.lastName = ScannerWrapped.sc.nextLine();
 		}
 		System.out.println("Change the phone number (y/n)?");
-		ch = sc.nextLine().charAt(0);
+		ch = ScannerWrapped.sc.nextLine().charAt(0);
 		if(ch == 'Y' || ch == 'y') {
 			System.out.println("Enter the phone number: ");
-			this.phoneNumber = sc.nextLong();
-			sc.nextLine();
+			this.phoneNumber = ScannerWrapped.sc.nextLong();
+			ScannerWrapped.sc.nextLine();
 		}
 		System.out.println("Change the email (y/n)?");
-		ch = sc.nextLine().charAt(0);
+		ch = ScannerWrapped.sc.nextLine().charAt(0);
 		if(ch == 'Y' || ch == 'y') {
 			System.out.println("Enter the email: ");
-			this.email = sc.nextLine();
+			this.email = ScannerWrapped.sc.nextLine();
 		}
 		System.out.println("Change the address (y/n)?");
-		ch = sc.nextLine().charAt(0);
+		ch = ScannerWrapped.sc.nextLine().charAt(0);
 		if(ch == 'Y' || ch == 'y') {
 			add.modify();
 		}
 	}
 	public boolean checkName(String[] name) {
-		return name[0] == this.firstName && name[1] == this.lastName;
+		return this.firstName.equals(name[0]) && this.lastName.equals(name[1]);
 	}
 	
 	//Setters
@@ -98,7 +97,6 @@ public class Person {
 	}
 	//---------------------------------------------------
 	
-    @Override
 	public String toString() {
 		return "Name: " + firstName + " " + lastName + "\n"
 				+ "Phone Number: " + phoneNumber + "\n" 

@@ -1,9 +1,8 @@
 package detailsofperson;
 
-import java.util.Scanner;
+import scannerwrapper.ScannerWrapped;
 
 public class Address {
-	Scanner sc = new Scanner(System.in);
 	private int buildingNumber;
 	private String street;
 	private String city;
@@ -22,42 +21,42 @@ public class Address {
 	
 	public void modify() {
 		System.out.println("Change Building number (y/n)? ");
-		char ch = sc.nextLine().charAt(0);
+		char ch = ScannerWrapped.sc.nextLine().charAt(0);
 		if(ch == 'Y' || ch == 'y') {
 			System.out.println("Enter the building number: ");
-			this.buildingNumber = sc.nextInt();
-			sc.nextLine();
+			this.buildingNumber = ScannerWrapped.sc.nextInt();
+			ScannerWrapped.sc.nextLine();
 		}
 		System.out.println("Change the street name (y/n)?");
-		ch = sc.nextLine().charAt(0);
+		ch = ScannerWrapped.sc.nextLine().charAt(0);
 		if(ch == 'Y' || ch == 'y') {
 			System.out.println("Enter the street name: ");
-			this.street = sc.nextLine();
+			this.street = ScannerWrapped.sc.nextLine();
 		}
 		System.out.println("Change the city name (y/n)?");
-		ch = sc.nextLine().charAt(0);
+		ch = ScannerWrapped.sc.nextLine().charAt(0);
 		if(ch == 'Y' || ch == 'y') {
 			System.out.println("Enter the city name: ");
-			this.city = sc.nextLine();
+			this.city = ScannerWrapped.sc.nextLine();
 		}
 		System.out.println("Change the state(y/n)?");
-		ch = sc.nextLine().charAt(0);
+		ch = ScannerWrapped.sc.nextLine().charAt(0);
 		if(ch == 'Y' || ch == 'y') {
 			System.out.println("Enter the state name: ");
-			this.state = sc.nextLine();
+			this.state = ScannerWrapped.sc.nextLine();
 		}
 		System.out.println("Change the country name (y/n)?");
-		ch = sc.nextLine().charAt(0);
+		ch = ScannerWrapped.sc.nextLine().charAt(0);
 		if(ch == 'Y' || ch == 'y') {
 			System.out.println("Enter the country name: ");
-			this.country = sc.nextLine();
+			this.country = ScannerWrapped.sc.nextLine();
 		}
 		System.out.println("Change the zip code(y/n)?");
-		ch = sc.nextLine().charAt(0);
+		ch = ScannerWrapped.sc.nextLine().charAt(0);
 		if(ch == 'Y' || ch == 'y') {
 			System.out.println("Enter the new zip code: ");
-			this.zip = sc.nextInt();
-			sc.nextLine();
+			this.zip = ScannerWrapped.sc.nextInt();
+			ScannerWrapped.sc.nextLine();
 		}
 		
 	}
@@ -106,7 +105,6 @@ public class Address {
 	}
 	//---------------------------------------------------
 	
-    @Override
 	public String toString() {
 		return "Building Number: " + buildingNumber + "\n"
 				+ "Street: " + street + "\n"
