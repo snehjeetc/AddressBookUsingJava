@@ -2,14 +2,12 @@
 Address Book Program
 
 /-------------------------------------------------------------/
-version : fv
-        Console based UI added.
+version : UC7
+        
+        Added features
+        1.) Structure for address book changed
+        2.) Duplicate names not allowed in the book anymore.
 
-        Added Features:
-        1.) Creates a list of books
-        2.) Ability to modify the names and contents of books.
-        3.) Ability to modify the name of the book.
-        4.) Ability to remove book and book's contents.
 /------------------------------------------------------------/
 
 
