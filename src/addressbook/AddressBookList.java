@@ -126,7 +126,7 @@ public class AddressBookList {
 		System.out.println("-------------------------------------");
 		System.out.println("Choose from the following option: ");
 		System.out.println("1.) Add contacts");
-		System.out.println("2.) Search and print a contact ");
+		System.out.println("2.) Search and view");
 		System.out.println("3.) Modify a contact");
 		System.out.println("4.) Delete a contact");
 		System.out.println("5.) Go back to the main menu");
@@ -176,27 +176,38 @@ public class AddressBookList {
 	private int searchAndPerform(AddressBook book, int perform) {
 		System.out.println("-------------------------------------");
 		System.out.println("Search by: ");
-		System.out.println("1.) Name \t 2.) Phone Number");
+		System.out.println("1.) Name \t 2.) Phone Number ");
+		System.out.println("3.) City \t 4.) State");
 		System.out.println("-------------------------------------");
 		int choice = ScannerWrapped.sc.nextInt();
 		ScannerWrapped.sc.nextLine();
-		if(choice!=1 && choice!=2) {
+		if(choice < 1 || choice > 4) {
 			System.out.println("Wrong input");
 			return 1;
 		}
-		if(choice == 1) {
+		switch(choice) {
+		case 1 : {
 			String[] name = new String[2];
 			System.out.println("Enter first name: ");
 			name[0] = ScannerWrapped.sc.nextLine();
 			System.out.println("Enter last name: ");
 			name[1] = ScannerWrapped.sc.nextLine();
 			searchAndPerform(book, name, perform);
-		}
-		else {
+			}
+			break;
+		case 2: {
 			System.out.println("Enter the phone number: ");
 			long phoneNumber = ScannerWrapped.sc.nextLong();
 			ScannerWrapped.sc.nextLine();
 			searchAndPerform(book, phoneNumber, perform);
+			}
+			break;
+		case 3: 
+			searchCityInBook(book, perform);
+			break;
+		case 4:
+			searchStateInBook(book, perform);
+			break;
 		}
 		return 0;
 	}
@@ -224,6 +235,36 @@ public class AddressBookList {
 			return;
 		case 4:
 			book.remove(phoneNumber);
+		}
+	}
+	
+	private void searchCityInBook(AddressBook book, int perform) {
+		System.out.println("Enter the city name: ");
+		String city = ScannerWrapped.sc.nextLine();
+		switch(perform) {
+		case 2:
+			book.searchCity(city, AddressBook.OperationType.VIEW);
+			return;
+		case 3:
+			book.searchCity(city, AddressBook.OperationType.MODIFY);
+			return;
+		case 4:
+			book.searchCity(city, AddressBook.OperationType.REMOVE);
+		}
+	}
+	
+	private void searchStateInBook(AddressBook book, int perform) {
+		System.out.println("Enter the state name: ");
+		String state = ScannerWrapped.sc.nextLine();
+		switch(perform) {
+		case 2:
+			book.searchCity(state, AddressBook.OperationType.VIEW);
+			return;
+		case 3:
+			book.searchCity(state, AddressBook.OperationType.MODIFY);
+			return;
+		case 4:
+			book.searchCity(state, AddressBook.OperationType.REMOVE);
 		}
 	}
 	

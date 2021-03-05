@@ -92,7 +92,7 @@ public class Person {
 	public String getEmail() {
 		return email;
 	}
-	public Address getAdress() {
+	public Address getAddress() {
 		return add;
 	}
 	//---------------------------------------------------

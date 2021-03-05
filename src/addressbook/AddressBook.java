@@ -6,6 +6,11 @@ import scannerwrapper.ScannerWrapped;
 
 public class AddressBook {
 	private String name;
+	enum OperationType{
+		VIEW,
+		MODIFY,
+		REMOVE;
+	}
 	private Map<String, Person> contactTable_Name_to_Person;
 	AddressBook(String name){
 		this.name = name;
@@ -160,11 +165,75 @@ public class AddressBook {
 		System.out.println(p);
 	}
 	
+	public void searchCity(String city, OperationType type) {
+		Person person = null;
+		boolean found = false;
+		for(Person p : contactTable_Name_to_Person.values()) {
+			if(city.contentEquals(p.getAddress().getCity())) {
+				person = p;
+				System.out.println("Check next?(Y/n)");
+				char ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
+				if(ch == 'Y')
+					continue;
+				else {
+					found = true;
+					break;
+				}
+			}
+		}
+		if(found) {
+			switch(type) {
+			case VIEW :
+				System.out.println(person);
+				break;
+			case MODIFY:
+				person.modify();
+				break;
+			case REMOVE:
+				contactTable_Name_to_Person.remove(person.getName());
+			}
+		}
+	}
+	
+	public void searchState(String state, OperationType type) {
+		Person person = null;
+		boolean found = false;
+		for(Person p : contactTable_Name_to_Person.values()) {
+			if(state.contentEquals(p.getAddress().getState())) {
+				person = p;
+				System.out.println("Check next?(Y/n)");
+				char ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
+				if(ch == 'Y')
+					continue;
+				else {
+					found = true;
+					break;
+				}
+			}
+		}
+		if(found) {
+			switch(type) {
+			case VIEW :
+				System.out.println(person);
+				break;
+			case MODIFY:
+				person.modify();
+				break;
+			case REMOVE:
+				contactTable_Name_to_Person.remove(person.getName());
+			}
+		}
+	}
+	
 	public void setName(String name) {
 		this.name = name;
 	}
 	
 	public String getName() {
 		return name;
+	}
+	
+	public int size() {
+		return contactTable_Name_to_Person.size();
 	}
 }
