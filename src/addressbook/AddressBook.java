@@ -6,10 +6,10 @@ import scannerwrapper.ScannerWrapped;
 
 public class AddressBook {
 	private String name;
-	private List<Person> contactList;
+	private Map<String, Person> contactTable_Name_to_Person;
 	AddressBook(String name){
 		this.name = name;
-		contactList = new ArrayList<Person>();
+		contactTable_Name_to_Person = new HashMap<>();
 	}
 	
 	public void fillBook() {
@@ -29,10 +29,16 @@ public class AddressBook {
 		name[0] = ScannerWrapped.sc.nextLine();
 		System.out.println("Enter the Last Name: ");
 		name[1] = ScannerWrapped.sc.nextLine();
+		String fullName = name[0] + " " + name[1];
+		if(contactTable_Name_to_Person.containsKey(fullName)) {
+			System.out.println("Name already exists");
+			System.out.println("Try modifying or remove contact");
+			return null;
+		}
 		System.out.println("Enter the phone number: ");
 		long phoneNum = ScannerWrapped.sc.nextLong();
 		ScannerWrapped.sc.nextLine();
-		while(this.search(phoneNum) != -1) {
+		while(this.search(phoneNum) != null) {
 			System.out.println("Phone number already exists");
 			System.out.println("Do you have a different number?(y/n)");
 			char ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
@@ -69,106 +75,89 @@ public class AddressBook {
 	}
 
 	public void addContact(Person p) {
-		contactList.add(p);
+		contactTable_Name_to_Person.put(p.getName(), p);
 	}
 	
-	public void modify(String[] name ) {
-		int atIndex = search(name);
-		if(atIndex == -1) {
-			System.out.println("Contact not found!");
-			return; 
+	public void modify(String[] name) {
+		Person p = search(name);
+		if(p == null) {
+			System.out.println("Contact doesn't exist");
+			return;
 		}
-		contactList.get(atIndex).modify();
+		p.modify();
 	}
 	
 	public void modify(long phoneNumber) {
-		int atIndex = search(phoneNumber);
-		if(atIndex == -1) {
-			System.out.println("Contact not found!");
-			return; 
+		Person p = search(phoneNumber);
+		if(p == null) {
+			System.out.println("Contact doesn't exist");
+			return;
 		}
-		contactList.get(atIndex).modify();
+		p.modify();
 	}
 	
 	public void remove(String[] name) {
-		int atIndex = search(name);
-		if(atIndex == -1) {
+		Person p = search(name);
+		if(p == null) {
 			System.out.println("Contact not found!");
 			return;
 		}
-		contactList.remove(atIndex);
+		contactTable_Name_to_Person.remove(p.getName());
 		System.out.println("Contact removed successfully!");
 	}
 	
 	public void remove(long phoneNumber) {
-		int atIndex = search(phoneNumber);
-		if(atIndex == -1) {
-			System.out.println("Contact not found!");
+		Person p = search(phoneNumber);
+		if(p == null) {
+			System.out.println("Contact doesn't exist");
 			return;
 		}
-		contactList.remove(atIndex);
-		System.out.println("Contact removed successfully!");
+		contactTable_Name_to_Person.remove(p.getName());
 	}
 	
-	private int search(String[] name) {
-		
-		for(int i=0; i<contactList.size(); i++) {
-			Person p = contactList.get(i);
-			System.out.println(p.getName());
-			if(contactList.get(i).checkName(name)) {
-				
-				System.out.println("Is it the contact?");
-				System.out.println(contactList.get(i));
-				System.out.println("y/n?");
-				
-				char ch = ScannerWrapped.sc.nextLine().charAt(0);
-				System.out.println(ch);
-				if(ch == 'y' || ch == 'Y') {
-					return i;
-				}
-			}
+	private Person search(String[] name) {
+		String fullName = name[0] + " " + name[1];
+		if(contactTable_Name_to_Person.containsKey(fullName)) {
+			return contactTable_Name_to_Person.get(fullName);
 		}
-		return -1;
+		return null;
 	}
 	
-	private int search(long phoneNumber) {
-		for(int i=0; i<contactList.size(); i++) {
-			if(contactList.get(i).getPhoneNumber() == phoneNumber) {
-					return i;
-			}
+	private Person search(long phoneNumber) {
+		Iterator<Map.Entry<String, Person>> itr = 
+				contactTable_Name_to_Person.entrySet().iterator();
+		while(itr.hasNext()) {
+			Map.Entry<String, Person> entry = itr.next();
+			if(entry.getValue().getPhoneNumber() == phoneNumber)
+				return entry.getValue();
 		}
-		return -1;
+		return null;
 	}
 	
 	public void printBook() {
-		for(int i=0; i<contactList.size(); i++) {
-			System.out.println(contactList.get(i));
-			System.out.println();
+		int serial = 1;
+		for(Map.Entry<String, Person> entry : 
+			contactTable_Name_to_Person.entrySet()) {
+			System.out.println(serial++ + ".)" + entry.getValue());
 		}
 	}
 	
 	public void print(String[] name) {
-		int atIndex = search(name);
-		if(atIndex == -1) {
-			System.out.println("Contact not found!");
+		Person p = search(name);
+		if(p == null) {
+			System.out.println("Contact doesn't exist");
 			return;
 		}
-		System.out.println(contactList.get(atIndex));
+		System.out.println(p);
 	}
 	
 	public void print(long phoneNumber) {
-		int atIndex = search(phoneNumber);
-		if(atIndex == -1) {
-			System.out.println("Contact not found");
+		Person p = search(phoneNumber);
+		if(p == null) {
+			System.out.println("Contact doesn't exist");
 			return;
 		}
-		System.out.println(contactList.get(atIndex));
-	}
-	
-	public void printAtIndex(int i) {
-		if(i >= contactList.size() || i<0)
-			return;
-		System.out.println(contactList.get(i));	
+		System.out.println(p);
 	}
 	
 	public void setName(String name) {
