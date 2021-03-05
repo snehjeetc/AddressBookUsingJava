@@ -219,6 +219,20 @@ public class AddressBook {
 		System.out.println(p);
 	}
 	
+	private void operate(Person person, OperationType type) {
+		switch(type) {
+		case VIEW :
+			System.out.println(person);
+			break;
+		case MODIFY:
+			person.modify();
+			break;
+		case REMOVE:
+			clearEmptyList(person.getAddress().getCity(), person.getAddress().getState());
+			contactTable_Name_to_Person.remove(person.getName());
+		}
+	}
+	
 	public void searchCity(String city, OperationType type) {
 		Person person = null;
 		boolean found = false;
@@ -242,20 +256,8 @@ public class AddressBook {
 			System.out.println(city + " not found in database!");
 			return;
 		}
-		
-		if(found) {
-			switch(type) {
-			case VIEW :
-				System.out.println(person);
-				break;
-			case MODIFY:
-				person.modify();
-				break;
-			case REMOVE:
-				clearEmptyList(person.getAddress().getCity(), person.getAddress().getState());
-				contactTable_Name_to_Person.remove(person.getName());
-			}
-		}
+		if(found) 
+			operate(person, type);
 	}
 	
 	public void searchState(String state, OperationType type) {
@@ -282,19 +284,8 @@ public class AddressBook {
 			return;
 		}
 		
-		if(found) {
-			switch(type) {
-			case VIEW :
-				System.out.println(person);
-				break;
-			case MODIFY:
-				person.modify();
-				break;
-			case REMOVE:
-				clearEmptyList(person.getAddress().getCity(), person.getAddress().getState());
-				contactTable_Name_to_Person.remove(person.getName());
-			}
-		}
+		if(found) 
+			operate(person, type);
 	}
 	
 	public void setName(String name) {
@@ -307,5 +298,19 @@ public class AddressBook {
 	
 	public int size() {
 		return contactTable_Name_to_Person.size();
+	}
+	
+	public int countByCity(String city) {
+		if(cityList.containsKey(city)) {
+			return cityList.get(city).size();
+		}
+		return -1;
+	}
+	
+	public int countByState(String state) {
+		if(stateList.containsKey(state)) {
+			return stateList.get(state).size();
+		}
+		return -1;
 	}
 }

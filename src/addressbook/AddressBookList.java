@@ -243,6 +243,23 @@ public class AddressBookList {
 		String city = ScannerWrapped.sc.nextLine();
 		switch(perform) {
 		case 2:
+			System.out.println("Show the count?(y/n) ");
+			char ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
+			if(ch == 'Y') {
+				int count = book.countByCity(city);
+				if(count != -1) {
+					System.out.println("Total number of persons in " 
+				+ city + ": " + count);
+					System.out.println("Continue search?(Y/n)");
+					ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
+					if(ch != 'Y')
+						return;
+				}
+				else {
+					System.out.println(city + " not found");
+					return;
+				}
+			}
 			book.searchCity(city, AddressBook.OperationType.VIEW);
 			return;
 		case 3:
@@ -258,13 +275,30 @@ public class AddressBookList {
 		String state = ScannerWrapped.sc.nextLine();
 		switch(perform) {
 		case 2:
-			book.searchCity(state, AddressBook.OperationType.VIEW);
+			System.out.println("Show the count?(y/n) ");
+			char ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
+			if(ch == 'Y') {
+				int count = book.countByState(state);
+				if(count != -1) {
+					System.out.println("Total number of persons in " 
+				+ state + ": " + count);
+					System.out.println("Continue search?(Y/n)");
+					ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
+					if(ch != 'Y')
+						return;
+				}
+				else {
+					System.out.println(state+ " not found");
+					return;
+				}
+			}
+			book.searchState(state, AddressBook.OperationType.VIEW);
 			return;
 		case 3:
-			book.searchCity(state, AddressBook.OperationType.MODIFY);
+			book.searchState(state, AddressBook.OperationType.MODIFY);
 			return;
 		case 4:
-			book.searchCity(state, AddressBook.OperationType.REMOVE);
+			book.searchState(state, AddressBook.OperationType.REMOVE);
 		}
 	}
 	
