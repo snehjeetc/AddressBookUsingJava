@@ -19,7 +19,7 @@ public class AddressBookList {
 			printMenu();
 			int option = ScannerWrapped.sc.nextInt();
 			ScannerWrapped.sc.nextLine();
-			if(option <= 0 || option > 5) {
+			if(option <= 0 || option > 6) {
 				System.out.println("Wrong input");
 				System.out.println("Do you want to try again?(y/n)" );
 				ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
@@ -41,6 +41,7 @@ public class AddressBookList {
 		System.out.println("3.) Modify an address book.");
 		System.out.println("4.) Delete an address book.");
 		System.out.println("5.) Print a book");
+		System.out.println("6.) Find total number of address books.");
 		System.out.println("-------------------------------------");
 	}
 	
@@ -118,6 +119,10 @@ public class AddressBookList {
 				return;
 			}
 			book.printBook();
+			return;
+		case 6:
+			System.out.println("Total number of address books"
+					+ " in the system: " + size());
 			return;
 		}
 	}
@@ -203,10 +208,10 @@ public class AddressBookList {
 			}
 			break;
 		case 3: 
-			searchCityInBook(book, perform);
+			searchCityState(book, AddressBook.ListType.CITY, perform);
 			break;
 		case 4:
-			searchStateInBook(book, perform);
+			searchCityState(book, AddressBook.ListType.STATE, perform);
 			break;
 		}
 		return 0;
@@ -238,67 +243,41 @@ public class AddressBookList {
 		}
 	}
 	
-	private void searchCityInBook(AddressBook book, int perform) {
+	private void searchCityState(AddressBook book, AddressBook.ListType listType, int perform) {
+		String addressVar;
+		
+		if(listType == AddressBook.ListType.CITY) 
 		System.out.println("Enter the city name: ");
-		String city = ScannerWrapped.sc.nextLine();
+		else 
+			System.out.println("Enter the state name: ");
+			
+		addressVar = ScannerWrapped.sc.nextLine();
 		switch(perform) {
 		case 2:
 			System.out.println("Show the count?(y/n) ");
 			char ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
 			if(ch == 'Y') {
-				int count = book.countByCity(city);
+				int count = book.countCityOrState(addressVar, listType);
 				if(count != -1) {
 					System.out.println("Total number of persons in " 
-				+ city + ": " + count);
+				+ addressVar + ": " + count);
 					System.out.println("Continue search?(Y/n)");
 					ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
 					if(ch != 'Y')
 						return;
 				}
 				else {
-					System.out.println(city + " not found");
+					System.out.println(addressVar + " not found");
 					return;
 				}
 			}
-			book.searchCity(city, AddressBook.OperationType.VIEW);
+			book.searchCityOrState(addressVar, AddressBook.OperationType.VIEW, listType);
 			return;
 		case 3:
-			book.searchCity(city, AddressBook.OperationType.MODIFY);
+			book.searchCityOrState(addressVar, AddressBook.OperationType.MODIFY, listType);
 			return;
 		case 4:
-			book.searchCity(city, AddressBook.OperationType.REMOVE);
-		}
-	}
-	
-	private void searchStateInBook(AddressBook book, int perform) {
-		System.out.println("Enter the state name: ");
-		String state = ScannerWrapped.sc.nextLine();
-		switch(perform) {
-		case 2:
-			System.out.println("Show the count?(y/n) ");
-			char ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
-			if(ch == 'Y') {
-				int count = book.countByState(state);
-				if(count != -1) {
-					System.out.println("Total number of persons in " 
-				+ state + ": " + count);
-					System.out.println("Continue search?(Y/n)");
-					ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
-					if(ch != 'Y')
-						return;
-				}
-				else {
-					System.out.println(state+ " not found");
-					return;
-				}
-			}
-			book.searchState(state, AddressBook.OperationType.VIEW);
-			return;
-		case 3:
-			book.searchState(state, AddressBook.OperationType.MODIFY);
-			return;
-		case 4:
-			book.searchState(state, AddressBook.OperationType.REMOVE);
+			book.searchCityOrState(addressVar, AddressBook.OperationType.REMOVE, listType);
 		}
 	}
 	

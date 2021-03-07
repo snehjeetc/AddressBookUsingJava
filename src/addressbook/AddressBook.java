@@ -11,14 +11,18 @@ public class AddressBook {
 		MODIFY,
 		REMOVE;
 	}
+	enum ListType{
+		CITY,
+		STATE;
+	}
 	private Map<String, Person> contactTable_Name_to_Person;
-	private Map<String, LinkedList<Person>> cityList;
-	private Map<String, LinkedList<Person>> stateList;
+	private ArrayList<Map<String, LinkedList<Person>>> table;
 	AddressBook(String name){
 		this.name = name;
 		contactTable_Name_to_Person = new HashMap<>();
-		cityList = new HashMap<>();
-		stateList = new HashMap<>();
+		table = new ArrayList<Map<String, LinkedList<Person>>>(2);
+		table.add(new HashMap<>());
+		table.add(new HashMap<>());
 	}
 	
 	public void fillBook() {
@@ -89,36 +93,45 @@ public class AddressBook {
 	}
 	
 	private void updateList(Person p, String city, String state) {
-		if(cityList.containsKey(p.getAddress().getCity())){
-			if(!cityList.get(p.getAddress().getCity()).contains(p))
-				cityList.get(p.getAddress().getCity()).add(p);
+		Map<String, LinkedList<Person>> cityList = table.get(ListType.CITY.ordinal());
+		Map<String, LinkedList<Person>> stateList = table.get(ListType.STATE.ordinal());
+		String personCity = p.getAddress().getCity();
+		String personState = p.getAddress().getState();
+		LinkedList<Person> personList;
+		
+		if(cityList.containsKey(personCity)){
+			if(!cityList.get(personCity).contains(p))
+				cityList.get(personCity).add(p);
 		}
 		else {
-			LinkedList<Person> personList = new LinkedList<>();
+			personList = new LinkedList<>();
 			personList.add(p);
-			cityList.put(p.getAddress().getCity(), personList);
+			cityList.put(personCity, personList);
 		}
-		if(stateList.containsKey(p.getAddress().getState())) {
-			if(!stateList.get(p.getAddress().getState()).contains(p))
-				stateList.get(p.getAddress().getState()).add(p);
+		if(stateList.containsKey(personState)) {
+			if(!stateList.get(personState).contains(p))
+				stateList.get(personState).add(p);
 		}
 		else {
-			LinkedList<Person> personList = new LinkedList<>();
+			personList = new LinkedList<>();
 			personList.add(p);
-			stateList.put(p.getAddress().getState(), personList);
+			stateList.put(personState, personList);
 		}
 		
-		if(!p.getAddress().getCity().equals(city)) {
+		if(!personCity.equals(city)) {
 			cityList.get(city).remove(p);
 			clearEmptyList(city, "");
 		}
-		if(!p.getAddress().getState().equals(state)) {
+		if(!personState.equals(state)) {
 			stateList.get(state).remove(p);
 			clearEmptyList("", state);
 		}
+		
 	}
 	
 	private void clearEmptyList(String city, String state) {
+		Map<String, LinkedList<Person>> cityList = table.get(ListType.CITY.ordinal());
+		Map<String, LinkedList<Person>> stateList = table.get(ListType.STATE.ordinal());
 		if(city.length()!=0) {
 			if(cityList.get(city).isEmpty())
 				cityList.remove(city);
@@ -129,6 +142,69 @@ public class AddressBook {
 		}
 	}
 	
+	private void modify(Person p) {
+		String email = null;
+		long phoneNumber = 0;
+		String[] name = new String[2];
+		name[0] = null;
+		name[1] = null;
+		System.out.println("Change First Name (y/n)? ");
+		char ch = ScannerWrapped.sc.nextLine().charAt(0);
+		if(ch == 'Y' || ch == 'y') {
+			System.out.println("Enter the first name: ");
+			name[0] = ScannerWrapped.sc.nextLine();
+		}
+		if(name[0] == null)
+			name[0] = p.getFirstName();
+		
+		System.out.println("Change the last Name (y/n)?");
+		ch = ScannerWrapped.sc.nextLine().charAt(0);
+		if(ch == 'Y' || ch == 'y') {
+			System.out.println("Enter the last name: ");
+			name[1] = ScannerWrapped.sc.nextLine();
+		}
+		if(name[1] == null)
+			name[1] = p.getLastName();
+		
+		if(!p.getName().equals(name[0] + " " + name[1]) && search(name) != null) {
+			System.out.println("Contact name exists!");
+			System.out.println("Modification failed. Try again.");
+			return;
+		}
+		
+		System.out.println("Change the phone number (y/n)?");
+		ch = ScannerWrapped.sc.nextLine().charAt(0);
+		if(ch == 'Y' || ch == 'y') {
+			System.out.println("Enter the phone number: ");
+			phoneNumber = ScannerWrapped.sc.nextLong();
+			ScannerWrapped.sc.nextLine();
+		}
+		if(phoneNumber == 0)
+			phoneNumber = p.getPhoneNumber();
+		
+		if(phoneNumber != p.getPhoneNumber() && search(phoneNumber) != null) {
+			System.out.println("Contact number already exists!");
+			System.out.println("Modification failed. Try again.");
+			return;
+		}
+		
+		System.out.println("Change the email (y/n)?");
+		ch = ScannerWrapped.sc.nextLine().charAt(0);
+		if(ch == 'Y' || ch == 'y') {
+			System.out.println("Enter the email: ");
+			email = ScannerWrapped.sc.nextLine();
+		}
+		System.out.println("Change the address (y/n)?");
+		ch = ScannerWrapped.sc.nextLine().charAt(0);
+		if(ch == 'Y' || ch == 'y') {
+			p.getAddress().modify();
+		}
+		p.setFirstName(name[0]);
+		p.setLastName(name[1]);
+		p.setPhoneNumber(phoneNumber);
+		p.setEmail(email);
+	}
+	
 	public void modify(String[] name) {
 		Person p = search(name);
 		if(p == null) {
@@ -137,7 +213,7 @@ public class AddressBook {
 		}
 		String city = p.getAddress().getCity();
 		String state = p.getAddress().getState();
-		p.modify();
+		modify(p);
 		updateList(p, city, state);
 	}
 	
@@ -149,7 +225,7 @@ public class AddressBook {
 		}
 		String city = p.getAddress().getCity();
 		String state = p.getAddress().getState();
-		p.modify();
+		modify(p);
 		updateList(p, city, state);
 	}
 	
@@ -225,7 +301,7 @@ public class AddressBook {
 			System.out.println(person);
 			break;
 		case MODIFY:
-			person.modify();
+			modify(person);
 			break;
 		case REMOVE:
 			clearEmptyList(person.getAddress().getCity(), person.getAddress().getState());
@@ -233,13 +309,14 @@ public class AddressBook {
 		}
 	}
 	
-	public void searchCity(String city, OperationType type) {
+	public void searchCityOrState(String addressVar, OperationType type, ListType listType ) {
 		Person person = null;
 		boolean found = false;
-		if(cityList.containsKey(city)) {
-			cityList.get(city).forEach(p -> System.out.println(p.getName()));
+		Map<String, LinkedList<Person>> list = table.get(listType.ordinal());
+		if(list.containsKey(addressVar)) {
+			list.get(addressVar).forEach(p -> System.out.println(p.getName()));
 			System.out.println("Select the contact: ");
-			for(Person p : cityList.get(city)) {
+			for(Person p : list.get(addressVar)) {
 				person = p;
 				System.out.println(p);
 				System.out.println("Check next?(Y/n)");
@@ -253,40 +330,13 @@ public class AddressBook {
 			}
 		}
 		else {
-			System.out.println(city + " not found in database!");
+			System.out.println(addressVar + " not found in database!");
 			return;
 		}
 		if(found) 
 			operate(person, type);
 	}
 	
-	public void searchState(String state, OperationType type) {
-		Person person = null;
-		boolean found = false;
-		if(stateList.containsKey(state)) {
-			stateList.get(state).forEach(p -> System.out.println(p.getName()));
-			System.out.println("Select the contact: ");
-			for(Person p : stateList.get(state)) {
-				person = p;
-				System.out.println(p);
-				System.out.println("Check next?(Y/n)");
-				char ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
-				if(ch == 'Y')
-					continue;
-				else {
-					found = true;
-					break;
-				}
-			}
-		}
-		else {
-			System.out.println(state + " not found in database!");
-			return;
-		}
-		
-		if(found) 
-			operate(person, type);
-	}
 	
 	public void setName(String name) {
 		this.name = name;
@@ -300,16 +350,10 @@ public class AddressBook {
 		return contactTable_Name_to_Person.size();
 	}
 	
-	public int countByCity(String city) {
-		if(cityList.containsKey(city)) {
-			return cityList.get(city).size();
-		}
-		return -1;
-	}
-	
-	public int countByState(String state) {
-		if(stateList.containsKey(state)) {
-			return stateList.get(state).size();
+	public int countCityOrState(String addressVar, ListType listType) {
+		Map<String, LinkedList<Person>> list = table.get(listType.ordinal());
+		if(list.containsKey(addressVar)) {
+			return list.get(addressVar).size();
 		}
 		return -1;
 	}

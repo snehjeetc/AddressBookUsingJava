@@ -53,7 +53,7 @@ public class Person {
 	
 	//Setters
 	//---------------------------------------------------
-	public void setFristName(String firstName) {
+	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
 	public void setLastName(String lastName) {
