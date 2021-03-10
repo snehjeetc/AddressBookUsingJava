@@ -20,6 +20,7 @@ public class AddressBook {
 	}
 	private TreeMap<String, Person> contactTable_Name_to_Person;
 	private ArrayList<Map<String, LinkedList<Person>>> table;
+	
 	AddressBook(String name){
 		this.name = name;
 		contactTable_Name_to_Person = new TreeMap<>();
@@ -129,7 +130,6 @@ public class AddressBook {
 			stateList.get(state).remove(p);
 			clearEmptyList("", state);
 		}
-		
 	}
 	
 	private void clearEmptyList(String city, String state) {

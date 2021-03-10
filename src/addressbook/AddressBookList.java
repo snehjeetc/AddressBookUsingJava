@@ -29,8 +29,6 @@ public class AddressBookList {
 			System.out.println("Continue? (Y/N)");
 			ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
 		}
-		
-		
 	}
 	
 	private void printMenu() {
@@ -300,7 +298,6 @@ public class AddressBookList {
 			}
 			book.viewCityOrState(addressVar, listType);
 		}
-		
 	}
 	
 	public int size() {
