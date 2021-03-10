@@ -2,9 +2,13 @@
 Address Book Program
 
 /-------------------------------------------------------------/
-version : UC10-0
+version : UC12
+
+        Structure of the book changed to 
+        TreeMap
         
-        Bugs fixed
+        View by sorted order by 
+        city/state/zip
     
         Work Pending
         Handle Exceptions
