@@ -158,9 +158,27 @@ public class AddressBookList {
 				book.fillBook();
 				return;
 			case 2: {
-				int res = searchAndPerform(book, 2);
-				if(res == 1)
+				System.out.println("-------------------------------------");
+				System.out.println("Search by: ");
+				System.out.println("1.) Name/PhoneNumber \t 2.) City"
+									+ "	3.)State");
+				System.out.println("-------------------------------------");
+				int searchOpt = ScannerWrapped.sc.nextInt();
+				ScannerWrapped.sc.nextLine();
+				if(searchOpt < 1 || searchOpt > 3) {
+					System.out.println("Invalid Input!");
+					System.out.println("Taking you back to the main menu");
+					return;
+				}
+				if(searchOpt == 1) {
+					int res = searchAndPerform(book, 2);
+					if(res == 1)
 					System.out.println("Taking you back to main menu.");
+					}
+				else if(searchOpt == 2) 
+					viewCityState(book, AddressBook.ListType.CITY);
+				else
+					viewCityState(book, AddressBook.ListType.STATE);
 				}
 				return;
 			case 3:{
@@ -182,11 +200,10 @@ public class AddressBookList {
 		System.out.println("-------------------------------------");
 		System.out.println("Search by: ");
 		System.out.println("1.) Name \t 2.) Phone Number ");
-		System.out.println("3.) City \t 4.) State");
 		System.out.println("-------------------------------------");
 		int choice = ScannerWrapped.sc.nextInt();
 		ScannerWrapped.sc.nextLine();
-		if(choice < 1 || choice > 4) {
+		if(choice < 1 || choice > 2) {
 			System.out.println("Wrong input");
 			return 1;
 		}
@@ -206,12 +223,6 @@ public class AddressBookList {
 			ScannerWrapped.sc.nextLine();
 			searchAndPerform(book, phoneNumber, perform);
 			}
-			break;
-		case 3: 
-			searchCityState(book, AddressBook.ListType.CITY, perform);
-			break;
-		case 4:
-			searchCityState(book, AddressBook.ListType.STATE, perform);
 			break;
 		}
 		return 0;
@@ -243,42 +254,32 @@ public class AddressBookList {
 		}
 	}
 	
-	private void searchCityState(AddressBook book, AddressBook.ListType listType, int perform) {
+	private void viewCityState(AddressBook book, AddressBook.ListType listType) {
 		String addressVar;
-		
 		if(listType == AddressBook.ListType.CITY) 
-		System.out.println("Enter the city name: ");
+			System.out.println("Enter the city name: ");
 		else 
-			System.out.println("Enter the state name: ");
-			
+			System.out.println("Enter the state name: ");	
 		addressVar = ScannerWrapped.sc.nextLine();
-		switch(perform) {
-		case 2:
-			System.out.println("Show the count?(y/n) ");
-			char ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
-			if(ch == 'Y') {
-				int count = book.countCityOrState(addressVar, listType);
-				if(count != -1) {
-					System.out.println("Total number of persons in " 
-				+ addressVar + ": " + count);
-					System.out.println("Continue search?(Y/n)");
-					ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
-					if(ch != 'Y')
-						return;
-				}
-				else {
-					System.out.println(addressVar + " not found");
+		System.out.println("Show the count?(y/n) ");
+		char ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
+		if(ch == 'Y') {
+			long count = book.countCityOrState(addressVar, listType);
+			if(count != -1) {
+				System.out.println("Total number of persons in " 
+						+ addressVar + ": " + count);
+				System.out.println("Continue to display contacts?(Y/n)");
+				ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
+				if(ch != 'Y')
 					return;
-				}
 			}
-			book.searchCityOrState(addressVar, AddressBook.OperationType.VIEW, listType);
-			return;
-		case 3:
-			book.searchCityOrState(addressVar, AddressBook.OperationType.MODIFY, listType);
-			return;
-		case 4:
-			book.searchCityOrState(addressVar, AddressBook.OperationType.REMOVE, listType);
+			else {
+				System.out.println(addressVar + " not found");
+				return;
+			}
+			book.viewCityOrState(addressVar, listType);
 		}
+		
 	}
 	
 	public int size() {

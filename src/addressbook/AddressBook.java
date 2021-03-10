@@ -6,11 +6,6 @@ import scannerwrapper.ScannerWrapped;
 
 public class AddressBook {
 	private String name;
-	enum OperationType{
-		VIEW,
-		MODIFY,
-		REMOVE;
-	}
 	enum ListType{
 		CITY,
 		STATE;
@@ -205,6 +200,15 @@ public class AddressBook {
 		p.setEmail(email);
 	}
 	
+	private void remove(Person p) {
+		Map<String, LinkedList<Person>> cityList = table.get(ListType.CITY.ordinal());
+		Map<String, LinkedList<Person>> stateList = table.get(ListType.STATE.ordinal());
+		contactTable_Name_to_Person.remove(p.getName());
+		cityList.get(p.getAddress().getCity()).remove(p);
+		stateList.get(p.getAddress().getState()).remove(p);
+		clearEmptyList(p.getAddress().getCity(), p.getAddress().getCity());
+	}
+	
 	public void modify(String[] name) {
 		Person p = search(name);
 		if(p == null) {
@@ -235,8 +239,7 @@ public class AddressBook {
 			System.out.println("Contact not found!");
 			return;
 		}
-		clearEmptyList(p.getAddress().getCity(), p.getAddress().getCity());
-		contactTable_Name_to_Person.remove(p.getName());
+		remove(p);
 		System.out.println("Contact removed successfully!");
 	}
 	
@@ -246,8 +249,8 @@ public class AddressBook {
 			System.out.println("Contact doesn't exist");
 			return;
 		}
-		clearEmptyList(p.getAddress().getCity(), p.getAddress().getCity());
-		contactTable_Name_to_Person.remove(p.getName());
+		remove(p);
+		System.out.println("Contact removed successfully!");
 	}
 	
 	private Person search(String[] name) {
@@ -295,48 +298,18 @@ public class AddressBook {
 		System.out.println(p);
 	}
 	
-	private void operate(Person person, OperationType type) {
-		switch(type) {
-		case VIEW :
-			System.out.println(person);
-			break;
-		case MODIFY:
-			modify(person);
-			break;
-		case REMOVE:
-			clearEmptyList(person.getAddress().getCity(), person.getAddress().getState());
-			contactTable_Name_to_Person.remove(person.getName());
-		}
-	}
-	
-	public void searchCityOrState(String addressVar, OperationType type, ListType listType ) {
-		Person person = null;
-		boolean found = false;
+	public void viewCityOrState(String addressVar, ListType listType ) {
 		Map<String, LinkedList<Person>> list = table.get(listType.ordinal());
-		if(list.containsKey(addressVar)) {
-			list.get(addressVar).forEach(p -> System.out.println(p.getName()));
-			System.out.println("Select the contact: ");
-			for(Person p : list.get(addressVar)) {
-				person = p;
-				System.out.println(p);
-				System.out.println("Check next?(Y/n)");
-				char ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
-				if(ch == 'Y')
-					continue;
-				else {
-					found = true;
-					break;
-				}
-			}
-		}
-		else {
+		if(!list.containsKey(addressVar)) { 
 			System.out.println(addressVar + " not found in database!");
 			return;
-		}
-		if(found) 
-			operate(person, type);
+		}	
+		
+		list.entrySet().stream()
+					   .filter(e -> addressVar.equals(e.getKey()))
+					   .flatMap(e -> e.getValue().stream())
+					   .forEach(System.out::println);
 	}
-	
 	
 	public void setName(String name) {
 		this.name = name;
@@ -350,11 +323,14 @@ public class AddressBook {
 		return contactTable_Name_to_Person.size();
 	}
 	
-	public int countCityOrState(String addressVar, ListType listType) {
-		Map<String, LinkedList<Person>> list = table.get(listType.ordinal());
-		if(list.containsKey(addressVar)) {
-			return list.get(addressVar).size();
-		}
-		return -1;
+	public long countCityOrState(String addressVar, ListType listType) {
+		if(!table.get(listType.ordinal()).containsKey(addressVar))
+			return -1;
+		
+		return table.get(listType.ordinal()).entrySet()
+									 .stream()
+									 .filter(e -> addressVar.equals(e.getKey()))
+									 .flatMap(e -> e.getValue().stream())
+									 .count();
 	}
 }
