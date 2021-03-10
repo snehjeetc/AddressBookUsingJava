@@ -2,19 +2,27 @@ package addressbook;
 import detailsofperson.Address;
 import detailsofperson.Person;
 import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Stream;
+
 import scannerwrapper.ScannerWrapped;
 
 public class AddressBook {
 	private String name;
+	enum SortType{
+		SORT_CITY,
+		SORT_STATE,
+		SORT_ZIP;
+	}
 	enum ListType{
 		CITY,
 		STATE;
 	}
-	private Map<String, Person> contactTable_Name_to_Person;
+	private TreeMap<String, Person> contactTable_Name_to_Person;
 	private ArrayList<Map<String, LinkedList<Person>>> table;
 	AddressBook(String name){
 		this.name = name;
-		contactTable_Name_to_Person = new HashMap<>();
+		contactTable_Name_to_Person = new TreeMap<>();
 		table = new ArrayList<Map<String, LinkedList<Person>>>(2);
 		table.add(new HashMap<>());
 		table.add(new HashMap<>());
@@ -332,5 +340,31 @@ public class AddressBook {
 									 .filter(e -> addressVar.equals(e.getKey()))
 									 .flatMap(e -> e.getValue().stream())
 									 .count();
+	}
+	
+	public void viewSortedOrder(SortType sortType) {
+		Stream<Entry<String, Person>> stream = contactTable_Name_to_Person.entrySet().stream();
+		switch(sortType) {
+		case SORT_CITY:
+			stream.sorted((e1, e2) -> e1.getValue()
+										.getAddress()
+										.getCity()
+										.compareTo(e2.getValue().getAddress().getCity()))
+										.forEach(e -> System.out.println(e.getValue()));
+			return;
+		case SORT_STATE:
+			stream.sorted((e1, e2) -> e1.getValue()
+					.getAddress()
+					.getState()
+					.compareTo(e2.getValue().getAddress().getState()))
+					.forEach(e -> System.out.println(e.getValue()));
+			return;
+		case SORT_ZIP:
+			stream.sorted((e1, e2) -> 
+								e1.getValue().getAddress().getZipCode() 
+								-e2.getValue().getAddress().getZipCode())
+				  .forEach(e -> System.out.println(e.getValue()));
+			return;
+		}
 	}
 }

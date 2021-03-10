@@ -118,8 +118,29 @@ public class AddressBookList {
 				System.out.println(name + " not found!");
 				return;
 			}
-			book.printBook();
-			return;
+			System.out.println("-------------------------------------");
+			System.out.println("Show sorted order: ");
+			System.out.println("1.) Name");
+			System.out.println("2.) City");
+			System.out.println("3.) State");
+			System.out.println("4.) Zip");
+			System.out.println("-------------------------------------");
+			int sortOrder = ScannerWrapped.sc.nextInt();
+			ScannerWrapped.sc.nextLine();
+			switch(sortOrder) {
+			case 1: book.printBook();
+					return;
+			case 2:	book.viewSortedOrder(AddressBook.SortType.SORT_CITY);
+					return;
+			case 3:	book.viewSortedOrder(AddressBook.SortType.SORT_STATE);
+					return;
+			case 4: book.viewSortedOrder(AddressBook.SortType.SORT_ZIP);
+					return;
+			default:
+					System.out.println("Invalid input!");
+					System.out.println("Taking you back to main menu");
+					return;
+			}
 		case 6:
 			System.out.println("Total number of address books"
 					+ " in the system: " + size());
