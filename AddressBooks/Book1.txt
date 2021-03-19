@@ -1,0 +1,7 @@
+Albert,Einstein,9999995553,e=mc2@outlook.com,106,RelativelyStreet,Chennai,Tamil Nadu,India,570001 
+Cult,Hero,9999999993,cultHero@yahoo.co.in,103,Gautam nagarr,Patna,Bihar,India,290030 
+Gottfried,Leibniz,9888999998,integrationsign@something.com,107,CalciStreet,Bhuj,Gujarat,India,370001 
+John,Nash,9999999334,gametheory@orkut.com,105,HallucinatedStreet,Manali,Himachal Pradesh,India,440022 
+Ram,Kumar,9999999874,ramkumar@gmail.com,102,someStreet,Ayodhya,UP,India,145002 
+Rene,Descartes,9999992228,analyticalgeometry@gmail.com,104,3Dstreet,Bangalore,Karnataka,India,390701 
+Sam,Mendes,9999999998,sammendes@gmail.com,101,mgroad,Gangtok,Sikkim,India,100023 
