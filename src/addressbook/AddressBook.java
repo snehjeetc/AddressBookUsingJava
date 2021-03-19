@@ -1,8 +1,15 @@
 package addressbook;
 import detailsofperson.Address;
 import detailsofperson.Person;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import scannerwrapper.ScannerWrapped;
@@ -17,6 +24,9 @@ public class AddressBook {
 	enum ListType{
 		CITY,
 		STATE;
+	}
+	enum IOService{
+		FILE_IO;
 	}
 	private TreeMap<String, Person> contactTable_Name_to_Person;
 	private ArrayList<Map<String, LinkedList<Person>>> table;
@@ -366,5 +376,64 @@ public class AddressBook {
 				  .forEach(e -> System.out.println(e.getValue()));
 			return;
 		}
+	}
+	
+	
+	@SuppressWarnings("finally")
+	public static void writeBook(AddressBook book, Path donePath, IOService ioService) throws IOException {
+		if(ioService.equals(IOService.FILE_IO)) {
+			FileWriter fileWriter = new FileWriter(donePath.toString());
+			try{
+			for(Map.Entry<String, Person> entry : book.contactTable_Name_to_Person.entrySet()){
+
+				fileWriter.write(String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s \n",
+						entry.getValue().getFirstName(), entry.getValue().getLastName(),
+						entry.getValue().getPhoneNumber(), entry.getValue().getEmail(),
+						entry.getValue().getAddress().getBuildingNumber(),
+						entry.getValue().getAddress().getStreet(),
+						entry.getValue().getAddress().getCity(),
+						entry.getValue().getAddress().getState(),
+						entry.getValue().getAddress().getCountry(),
+						entry.getValue().getAddress().getZipCode()));
+				}
+			}catch(IOException e) {
+				e.printStackTrace();
+			}
+			finally {
+				fileWriter.close();
+				return;
+			}
+		}
+	}
+	
+	public static Person extractPerson(String line, String delimiter) {
+		String[] fields = line.split(delimiter);
+		String[] name = new String[2];
+		name[0] = fields[0];
+		name[1] = fields[1];
+		long phoneNumber = Long.parseLong(fields[2]);
+		String email = fields[3];
+		int buildingNumber = Integer.parseInt(fields[4]);
+		String[] addressArgs = new String[4];
+		addressArgs[0] = fields[5];
+		addressArgs[1] = fields[6];
+		addressArgs[2] = fields[7];
+		addressArgs[3] = fields[8];
+		int zipcode = Integer.parseInt(fields[9]);
+		Address add = new Address(buildingNumber, addressArgs, zipcode);
+		return new Person(name, phoneNumber, email, add);
+	}
+	
+	public static AddressBook loadBook(String DIR, String bookName, IOService ioService) throws IOException {
+		if(ioService.equals(IOService.FILE_IO)) {
+			List<Person> list = Files.lines(new File(DIR+bookName+".txt").toPath())
+									 .map(line -> line.trim())
+									 .map(line -> extractPerson(line, " "))
+									 .collect(Collectors.toList());
+			AddressBook book = new AddressBook(bookName);
+			list.forEach(e -> book.addContact(e));
+			return book;
+		}
+		return null;
 	}
 }

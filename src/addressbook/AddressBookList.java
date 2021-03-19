@@ -1,5 +1,8 @@
 package addressbook;
 import addressbook.AddressBook;
+import addressbook.AddressBookUtility.IOService;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +22,7 @@ public class AddressBookList {
 			printMenu();
 			int option = ScannerWrapped.sc.nextInt();
 			ScannerWrapped.sc.nextLine();
-			if(option <= 0 || option > 6) {
+			if(option <= 0 || option > 8) {
 				System.out.println("Wrong input");
 				System.out.println("Do you want to try again?(y/n)" );
 				ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
@@ -40,108 +43,143 @@ public class AddressBookList {
 		System.out.println("4.) Delete an address book.");
 		System.out.println("5.) Print a book");
 		System.out.println("6.) Find total number of address books.");
+		System.out.println("7.) Save an address book.");
+		System.out.println("8.) Load an address book.");
 		System.out.println("-------------------------------------");
 	}
 	
 	private void performOperations(int option) {
+		if(option == 8) {
+			System.out.println("Files in the database:");
+			AddressBookUtility.showFiles();
+		}
+		if(option == 6) {
+			System.out.println("Total number of loaded address books"
+					+ " in the system: " + size());
+			System.out.println("Total number of address books in the memory: "
+					+ AddressBookUtility.countFiles());
+			return;
+		}
 		System.out.println("Enter the name of the book: ");
 		String name = ScannerWrapped.sc.nextLine();
 		AddressBook book;
-		switch(option) {
-		case 1:
-			if(addressBooks.containsKey(name) == true) {
-				System.out.println(name + " Already exists!");
-				System.out.println("Try to modify the existing book/use a new name");
-				System.out.println("Taking you back to main menu!");
-				return;
-			}
-			book = new AddressBook(name);
-			addressBooks.put(name, book);
-			performBookOperations(book);
-			break;
-		case 2:
-			book = addressBooks.get(name);
-			if(book == null) {
-				System.out.println(name + " not found!");
-				return;
-			}
-			performBookOperations(book);
-			break;
-		case 3: 
-			book = addressBooks.get(name);
-			if(book == null) {
-				System.out.println(name + " not found!");
-				return;
-			}
-			System.out.println("-------------------------------------");
-			System.out.println("Modify: ");
-			System.out.println("1.) Book Name \t 2.) Modify a contact");
-			System.out.println("-------------------------------------");
-			int choice = ScannerWrapped.sc.nextInt();
-			ScannerWrapped.sc.nextLine();
-			if(choice != 1 && choice != 2) {
-				System.out.println("OOPs! Incorrect input");
-				System.out.println("Taking you back to main menu.");
-				return;
-			}
-			if(choice == 1) {
-				System.out.println("Enter new book name: ");
-				String bookName = ScannerWrapped.sc.nextLine();			
-				if(addressBooks.containsKey(name) || bookName.equals(book.getName())) {
-					System.out.println(bookName + "Already exists!");
-					System.out.println("Try deleting or find another name.");
+		try {
+			switch(option) {
+			case 1:
+				if(addressBooks.containsKey(name) == true) {
+					System.out.println(name + " Already exists!");
+					System.out.println("Try to modify the existing book/use a new name");
+					System.out.println("Taking you back to main menu!");
+					return;
+				}
+				book = new AddressBook(name);
+				addressBooks.put(name, book);
+				performBookOperations(book);
+				break;
+			case 2:
+				book = addressBooks.get(name);
+				if(book == null) {
+					System.out.println(name + " not found!");
+					return;
+				}
+				performBookOperations(book);
+				break;
+			case 3: 
+				book = addressBooks.get(name);
+				if(book == null) {
+					System.out.println(name + " not found!");
+					return;
+				}
+				System.out.println("-------------------------------------");
+				System.out.println("Modify: ");
+				System.out.println("1.) Book Name \t 2.) Modify a contact");
+				System.out.println("-------------------------------------");
+				int choice = ScannerWrapped.sc.nextInt();
+				ScannerWrapped.sc.nextLine();
+				if(choice != 1 && choice != 2) {
+					System.out.println("OOPs! Incorrect input");
 					System.out.println("Taking you back to main menu.");
 					return;
 				}
-				book.setName(bookName);
+				if(choice == 1) {
+					System.out.println("Enter new book name: ");
+					String bookName = ScannerWrapped.sc.nextLine();			
+					if(addressBooks.containsKey(bookName) || bookName.equals(book.getName())) {
+						System.out.println(bookName + "Already exists!");
+						System.out.println("Try deleting or find another name.");
+						System.out.println("Taking you back to main menu.");
+						return;
+					}
+					AddressBookUtility.rename(bookName, book.getName(), IOService.FILE_IO);
+					book.setName(bookName);
+					addressBooks.remove(name);
+					addressBooks.put(bookName, book);
+					return;
+				}
+				else {
+					performBookOperations(book);
+				}
+				return;
+			case 4:
+				book = addressBooks.get(name);
+				if(book == null) {
+					System.out.println(name + " not found!");
+					return;
+				}
 				addressBooks.remove(name);
-				addressBooks.put(bookName, book);
+				System.out.println("Do you want to delete this book from system? (Y/n)");
+				char ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
+				if(ch == 'Y')
+					AddressBookUtility.deleteFile(name, IOService.FILE_IO);
+				return;
+			case 5:
+				book = addressBooks.get(name);
+				if(book == null) {
+					System.out.println(name + " not found!");
+					return;
+				}
+				System.out.println("-------------------------------------");
+				System.out.println("Show sorted order: ");
+				System.out.println("1.) Name");
+				System.out.println("2.) City");
+				System.out.println("3.) State");
+				System.out.println("4.) Zip");
+				System.out.println("-------------------------------------");
+				int sortOrder = ScannerWrapped.sc.nextInt();
+				ScannerWrapped.sc.nextLine();
+				switch(sortOrder) {
+				case 1: book.printBook();
+						return;
+				case 2:	book.viewSortedOrder(AddressBook.SortType.SORT_CITY);
+						return;
+				case 3:	book.viewSortedOrder(AddressBook.SortType.SORT_STATE);
+						return;
+				case 4: book.viewSortedOrder(AddressBook.SortType.SORT_ZIP);
+						return;
+				default:
+						System.out.println("Invalid input!");
+						System.out.println("Taking you back to main menu");
+						return;
+				}
+			case 7:
+				book = addressBooks.get(name);
+				if(book == null) {
+					System.out.println(name + " not found!");
+					return;
+				}
+				AddressBookUtility.saveChanges(book, IOService.FILE_IO);
+				return;
+			case 8:
+				if(!addressBooks.containsKey(name)) {
+					book = AddressBookUtility.loadFile(name, IOService.FILE_IO);
+					if(book != null) {
+						addressBooks.put(book.getName(), book);
+					}
+				}
 				return;
 			}
-			else {
-				performBookOperations(book);
-			}
-			return;
-		case 4:
-			book = addressBooks.get(name);
-			if(book == null) {
-				System.out.println(name + " not found!");
-				return;
-			}
-			addressBooks.remove(name);
-			return;
-		case 5:
-			book = addressBooks.get(name);
-			if(book == null) {
-				System.out.println(name + " not found!");
-				return;
-			}
-			System.out.println("-------------------------------------");
-			System.out.println("Show sorted order: ");
-			System.out.println("1.) Name");
-			System.out.println("2.) City");
-			System.out.println("3.) State");
-			System.out.println("4.) Zip");
-			System.out.println("-------------------------------------");
-			int sortOrder = ScannerWrapped.sc.nextInt();
-			ScannerWrapped.sc.nextLine();
-			switch(sortOrder) {
-			case 1: book.printBook();
-					return;
-			case 2:	book.viewSortedOrder(AddressBook.SortType.SORT_CITY);
-					return;
-			case 3:	book.viewSortedOrder(AddressBook.SortType.SORT_STATE);
-					return;
-			case 4: book.viewSortedOrder(AddressBook.SortType.SORT_ZIP);
-					return;
-			default:
-					System.out.println("Invalid input!");
-					System.out.println("Taking you back to main menu");
-					return;
-			}
-		case 6:
-			System.out.println("Total number of address books"
-					+ " in the system: " + size());
+		}catch(IOException e) {
+			e.printStackTrace();
 			return;
 		}
 	}
