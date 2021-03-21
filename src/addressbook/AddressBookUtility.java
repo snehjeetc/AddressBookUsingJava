@@ -1,15 +1,16 @@
 package addressbook;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import detailsofperson.Person;
@@ -20,7 +21,8 @@ public class AddressBookUtility {
 	
 	enum IOService{
 		FILE_IO (".txt"),
-		CSV_IO (".csv");
+		CSV_IO (".csv"),
+		JSON_IO (".json");
 		private String extension;
 
 		IOService(String extension){
@@ -30,8 +32,10 @@ public class AddressBookUtility {
 	}
 	
 	public static AddressBook loadFile(String bookName, IOService ioService) throws IOException {
-		if(!ioService.equals(IOService.FILE_IO) && !ioService.equals(IOService.CSV_IO))
+		if(!ioService.equals(IOService.FILE_IO) && !ioService.equals(IOService.CSV_IO)
+												&& !ioService.equals(IOService.JSON_IO))
 			throw new IOException("Wrong IO service type");
+
 
 		if(ioService.equals(IOService.FILE_IO)) {
 			Path targetFile = Paths.get(DIR+bookName+IOService.FILE_IO.extension);
@@ -44,12 +48,11 @@ public class AddressBookUtility {
 						return AddressBook.extractPerson(fields);
 					})
 					.collect(Collectors.toList());
-
 			AddressBook book = new AddressBook(bookName);
 			list.forEach(e -> book.addContact(e));
 			return book;
 		}
-		if(ioService.equals(IOService.CSV_IO)){
+		else if(ioService.equals(IOService.CSV_IO)){
 			Reader reader = Files.newBufferedReader(Paths.get(DIR+bookName+IOService.CSV_IO.extension));
 			CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
 
@@ -60,6 +63,12 @@ public class AddressBookUtility {
 											 .collect(Collectors.toList());
 			AddressBook book = new AddressBook(bookName);
 			personList.forEach(person -> book.addContact(person));
+			return book;
+		}
+		else if(ioService.equals(IOService.JSON_IO)){
+			BufferedReader bufferedReader = new BufferedReader(
+					new FileReader(DIR+bookName+IOService.JSON_IO.extension));
+			AddressBook book = new Gson().fromJson(bufferedReader, AddressBook.class);
 			return book;
 		}
 		return null;
@@ -74,7 +83,8 @@ public class AddressBookUtility {
 	
 	public static void rename(String newbookName, String oldBookName, IOService ioService) 
 			throws IOException {
-		if(!ioService.equals(IOService.FILE_IO) && !ioService.equals(IOService.CSV_IO))
+		if(!ioService.equals(IOService.FILE_IO) && !ioService.equals(IOService.CSV_IO)
+												&& !ioService.equals(IOService.JSON_IO))
 			throw new IOException("Wrong IO service type");
 
 		File oldFile = new File(DIR+oldBookName+ioService.extension);
@@ -92,7 +102,8 @@ public class AddressBookUtility {
 	
 	public static void saveChanges(AddressBook book, IOService ioService) 
 			throws IOException {
-		if(!ioService.equals(IOService.FILE_IO) && !ioService.equals(IOService.CSV_IO))
+		if(!ioService.equals(IOService.FILE_IO) && !ioService.equals(IOService.CSV_IO)
+												&& !ioService.equals(IOService.JSON_IO))
 			throw new IOException("Wrong IO service type");
 
 		File f = new File(DIR+book.getName()+ioService.extension);
@@ -113,18 +124,25 @@ public class AddressBookUtility {
 		}
 		else if(ioService.equals(IOService.CSV_IO)){
 			try(
-					Writer writer = Files.newBufferedWriter(Paths.get(DIR+book.getName()+".csv"));
+					Writer writer = Files.newBufferedWriter(Paths.get(DIR+book.getName()+IOService.CSV_IO.extension));
 					){
 				AddressBook.writeBook(book, writer, AddressBook.IOService.CSV_IO);
 				writer.close();
 			}
+		}
+		else if(ioService.equals(IOService.JSON_IO)){
+			FileWriter writer = new FileWriter(DIR+book.getName()+IOService.JSON_IO.extension);
+			String json = new Gson().toJson(book);
+			writer.write(json);
+			writer.close();
 		}
 		System.out.println("Done writing");
 	}
 	
 	public static void deleteFile(String bookName, IOService ioService) 
 			throws IOException {
-		if(!ioService.equals(IOService.FILE_IO) && !ioService.equals(IOService.CSV_IO))
+		if(!ioService.equals(IOService.FILE_IO) && !ioService.equals(IOService.CSV_IO)
+												&& !ioService.equals(IOService.JSON_IO))
 			throw new IOException("Wrong IO service type");
 
 		File f = new File(DIR+bookName+ioService.extension);

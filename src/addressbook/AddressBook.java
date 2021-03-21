@@ -392,7 +392,9 @@ public class AddressBook {
 	}
 
 	public static void writeBook(AddressBook book, Writer writer, IOService ioService) throws IOException {
-		CSVWriter csvWriter = new CSVWriter(writer,
+		if(!ioService.equals(IOService.CSV_IO))
+			throw new IOException("Invalid IOService argument");
+			CSVWriter csvWriter = new CSVWriter(writer,
 				CSVWriter.DEFAULT_SEPARATOR,
 				CSVWriter.NO_QUOTE_CHARACTER,
 				CSVWriter.DEFAULT_ESCAPE_CHARACTER,

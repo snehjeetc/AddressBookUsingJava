@@ -1,0 +1,149 @@
+{
+  "name": "Book4" ,
+  "contactTable_Name_to_Person": {
+    "Abc Def": {
+      "firstName": "Abc" ,
+      "lastName": "Def" ,
+      "phoneNumber": 9999999999 ,
+      "email": "csdfg.com" ,
+      "add": {
+        "buildingNumber": 12 ,
+        "street": "mgRoad" ,
+        "city": "Delhi" ,
+        "state": "Delhi" ,
+        "country": "India" ,
+        "zip": 120051
+      }
+    } ,
+    "Ghi Jkl": {
+      "firstName": "Ghi" ,
+      "lastName": "Jkl" ,
+      "phoneNumber": 9999999876 ,
+      "email": "ohiog.com" ,
+      "add": {
+        "buildingNumber": 13 ,
+        "street": "skyroad" ,
+        "city": "Pune" ,
+        "state": "Maharashtra" ,
+        "country": "India" ,
+        "zip": 100000
+      }
+    } ,
+    "Mno Pqr": {
+      "firstName": "Mno" ,
+      "lastName": "Pqr" ,
+      "phoneNumber": 9999999997 ,
+      "email": "wetfi.com" ,
+      "add": {
+        "buildingNumber": 14 ,
+        "street": "qprcity" ,
+        "city": "Jaipur" ,
+        "state": "Rajasthan" ,
+        "country": "India" ,
+        "zip": 100003
+      }
+    }
+  } ,
+  "table": [
+    {
+      "Delhi": [
+        {
+          "firstName": "Abc" ,
+          "lastName": "Def" ,
+          "phoneNumber": 9999999999 ,
+          "email": "csdfg.com" ,
+          "add": {
+            "buildingNumber": 12 ,
+            "street": "mgRoad" ,
+            "city": "Delhi" ,
+            "state": "Delhi" ,
+            "country": "India" ,
+            "zip": 120051
+          }
+        }
+      ] ,
+      "Jaipur": [
+        {
+          "firstName": "Mno" ,
+          "lastName": "Pqr" ,
+          "phoneNumber": 9999999997 ,
+          "email": "wetfi.com" ,
+          "add": {
+            "buildingNumber": 14 ,
+            "street": "qprcity" ,
+            "city": "Jaipur" ,
+            "state": "Rajasthan" ,
+            "country": "India" ,
+            "zip": 100003
+          }
+        }
+      ] ,
+      "Pune": [
+        {
+          "firstName": "Ghi" ,
+          "lastName": "Jkl" ,
+          "phoneNumber": 9999999876 ,
+          "email": "ohiog.com" ,
+          "add": {
+            "buildingNumber": 13 ,
+            "street": "skyroad" ,
+            "city": "Pune" ,
+            "state": "Maharashtra" ,
+            "country": "India" ,
+            "zip": 100000
+          }
+        }
+      ]
+    } ,
+    {
+      "Delhi": [
+        {
+          "firstName": "Abc" ,
+          "lastName": "Def" ,
+          "phoneNumber": 9999999999 ,
+          "email": "csdfg.com" ,
+          "add": {
+            "buildingNumber": 12 ,
+            "street": "mgRoad" ,
+            "city": "Delhi" ,
+            "state": "Delhi" ,
+            "country": "India" ,
+            "zip": 120051
+          }
+        }
+      ] ,
+      "Maharashtra": [
+        {
+          "firstName": "Ghi" ,
+          "lastName": "Jkl" ,
+          "phoneNumber": 9999999876 ,
+          "email": "ohiog.com" ,
+          "add": {
+            "buildingNumber": 13 ,
+            "street": "skyroad" ,
+            "city": "Pune" ,
+            "state": "Maharashtra" ,
+            "country": "India" ,
+            "zip": 100000
+          }
+        }
+      ] ,
+      "Rajasthan": [
+        {
+          "firstName": "Mno" ,
+          "lastName": "Pqr" ,
+          "phoneNumber": 9999999997 ,
+          "email": "wetfi.com" ,
+          "add": {
+            "buildingNumber": 14 ,
+            "street": "qprcity" ,
+            "city": "Jaipur" ,
+            "state": "Rajasthan" ,
+            "country": "India" ,
+            "zip": 100003
+          }
+        }
+      ]
+    }
+  ]
+}
