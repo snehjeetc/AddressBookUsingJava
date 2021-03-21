@@ -103,7 +103,27 @@ public class AddressBookList {
 						System.out.println("Taking you back to main menu.");
 						return;
 					}
-					AddressBookUtility.rename(bookName, book.getName(), IOService.FILE_IO);
+					System.out.println("Rename the book in the local storage? (Y/n)");
+					char c = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
+					if(c == 'Y') {
+						System.out.println("Files in the database:");
+						AddressBookUtility.showFiles();
+						System.out.println("Format: 1.) txt \t 2.) csv ");
+						int formatoption = ScannerWrapped.sc.nextInt();
+						ScannerWrapped.sc.nextLine();
+						switch(formatoption) {
+						case 1:
+							AddressBookUtility.rename(bookName, book.getName(), IOService.FILE_IO);
+							break;
+						case 2:
+							AddressBookUtility.rename(bookName,  book.getName(), IOService.CSV_IO);
+							break;
+						default:
+							System.out.println("Invalid input..");
+							System.out.println("Taking you back to main menu");
+							return;
+						}
+					}
 					book.setName(bookName);
 					addressBooks.remove(name);
 					addressBooks.put(bookName, book);
@@ -120,10 +140,26 @@ public class AddressBookList {
 					return;
 				}
 				addressBooks.remove(name);
-				System.out.println("Do you want to delete this book from system? (Y/n)");
+				System.out.println("Do you want to delete this book from local storage? (Y/n)");
 				char ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
-				if(ch == 'Y')
-					AddressBookUtility.deleteFile(name, IOService.FILE_IO);
+				if(ch == 'Y'){
+					System.out.println("Files in the database:");
+					AddressBookUtility.showFiles();
+					System.out.println("Format: 1.) txt \t 2.) csv ");
+					int formatoption = ScannerWrapped.sc.nextInt();
+					ScannerWrapped.sc.nextLine();
+					switch(formatoption) {
+					case 1:
+						AddressBookUtility.deleteFile(name, IOService.FILE_IO);
+						break;
+					case 2:
+						AddressBookUtility.deleteFile(name, IOService.CSV_IO);
+						break;
+					default:
+						System.out.println("Invalid input..");
+						System.out.println("Taking you back to main menu");
+					}
+				}
 				return;
 			case 5:
 				book = addressBooks.get(name);
