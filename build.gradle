@@ -11,5 +11,7 @@ repositories {
 
 dependencies {
     compile "com.opencsv:opencsv:4.0"
+    implementation 'com.google.code.gson:gson:2.8.5'
+
 }
 
