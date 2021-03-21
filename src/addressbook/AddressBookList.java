@@ -53,13 +53,6 @@ public class AddressBookList {
 			System.out.println("Files in the database:");
 			AddressBookUtility.showFiles();
 		}
-		if(option == 6) {
-			System.out.println("Total number of loaded address books"
-					+ " in the system: " + size());
-			System.out.println("Total number of address books in the memory: "
-					+ AddressBookUtility.countFiles());
-			return;
-		}
 		System.out.println("Enter the name of the book: ");
 		String name = ScannerWrapped.sc.nextLine();
 		AddressBook book;
@@ -104,7 +97,7 @@ public class AddressBookList {
 				if(choice == 1) {
 					System.out.println("Enter new book name: ");
 					String bookName = ScannerWrapped.sc.nextLine();			
-					if(addressBooks.containsKey(bookName) || bookName.equals(book.getName())) {
+					if(addressBooks.containsKey(name) || bookName.equals(book.getName())) {
 						System.out.println(bookName + "Already exists!");
 						System.out.println("Try deleting or find another name.");
 						System.out.println("Taking you back to main menu.");
@@ -161,20 +154,48 @@ public class AddressBookList {
 						System.out.println("Taking you back to main menu");
 						return;
 				}
+			case 6:
+				System.out.println("Total number of address books"
+						+ " in the system: " + size());
+				return;
 			case 7:
 				book = addressBooks.get(name);
 				if(book == null) {
 					System.out.println(name + " not found!");
 					return;
 				}
-				AddressBookUtility.saveChanges(book, IOService.FILE_IO);
+				System.out.println("Format: 1.) txt \t 2.) csv ");
+				int formatoption = ScannerWrapped.sc.nextInt();
+				ScannerWrapped.sc.nextLine();
+				switch(formatoption) {
+					case 1:
+						AddressBookUtility.saveChanges(book, IOService.FILE_IO);
+						return;
+					case 2:
+						AddressBookUtility.saveChanges(book, IOService.CSV_IO);
+						return;
+					default:
+						System.out.println("Invalid input");
+						System.out.println("Taking you back to the main menu");
+				}
 				return;
 			case 8:
-				if(!addressBooks.containsKey(name)) {
-					book = AddressBookUtility.loadFile(name, IOService.FILE_IO);
-					if(book != null) {
-						addressBooks.put(book.getName(), book);
-					}
+				System.out.println("Format: 1.) txt \t 2.) csv ");
+				int loadoptions = ScannerWrapped.sc.nextInt();
+				switch (loadoptions) {
+					case 1:
+						book = AddressBookUtility.loadFile(name, IOService.FILE_IO);
+						break;
+					case 2:
+						book = AddressBookUtility.loadFile(name, IOService.CSV_IO);
+						break;
+					default:
+						System.out.println("Invalid input");
+						System.out.println("Taking you back to the main menu");
+						return;
+				}
+				if (book != null) {
+					addressBooks.put(book.getName(), book);
 				}
 				return;
 			}

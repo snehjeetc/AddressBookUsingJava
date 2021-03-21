@@ -1,10 +1,12 @@
 package addressbook;
+import com.opencsv.CSVWriter;
 import detailsofperson.Address;
 import detailsofperson.Person;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -26,7 +28,8 @@ public class AddressBook {
 		STATE;
 	}
 	enum IOService{
-		FILE_IO;
+		FILE_IO,
+		CSV_IO;
 	}
 	private TreeMap<String, Person> contactTable_Name_to_Person;
 	private ArrayList<Map<String, LinkedList<Person>>> table;
@@ -38,54 +41,35 @@ public class AddressBook {
 		table.add(new HashMap<>());
 		table.add(new HashMap<>());
 	}
-	
+
 	public void fillBook() {
-		char ch = 'Y';
-		while(ch == 'Y') {
-			Person p = getPerson();
-			if(p != null)
-				this.addContact(p);
-			System.out.println("Do you want to add another contact?");
-			ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
+		int NUMBER_OF_CONTACTS = 3;
+		String[][] names = new String[][] {
+				{"Abc", "Def"},
+				{"Ghi", "Jkl"},
+				{"Mno", "Pqr"}
+		};
+
+		String[] emails = new String[] {"csdfg.com", "ohiog.com", "wetfi.com"};
+		long[] phoneNums = new long[] {9999999999L, 9999999876L, 9999999997L};
+		String[][] addresses = new String[][] {
+				{"mgRoad", "Delhi", "Delhi", "India"},
+				{"skyroad", "Pune", "Maharashtra", "India"},
+				{"qprcity", "Jaipur", "Rajasthan", "India"}
+		};
+
+		int[] buildingNumbers = new int[] {12, 13, 14};
+		int[] zipNumbers = new int[] {120051, 100000, 100003};
+
+		for(int i=0; i<NUMBER_OF_CONTACTS; i++) {
+			Address a = new Address(buildingNumbers[i], addresses[i], zipNumbers[i]);
+			Person p = new Person(names[i], phoneNums[i], emails[i], a);
+			this.addContact(p);
 		}
+
 	}
-	
-	private Person getPerson() {
-		String[] name = new String[2];
-		System.out.println("Enter the First Name: ");
-		name[0] = ScannerWrapped.sc.nextLine();
-		System.out.println("Enter the Last Name: ");
-		name[1] = ScannerWrapped.sc.nextLine();
-		String fullName = name[0] + " " + name[1];
-		if(contactTable_Name_to_Person.containsKey(fullName)) {
-			System.out.println("Name already exists");
-			System.out.println("Try modifying or remove contact");
-			return null;
-		}
-		System.out.println("Enter the phone number: ");
-		long phoneNum = ScannerWrapped.sc.nextLong();
-		ScannerWrapped.sc.nextLine();
-		while(this.search(phoneNum) != null) {
-			System.out.println("Phone number already exists");
-			System.out.println("Do you have a different number?(y/n)");
-			char ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
-			if(ch == 'Y') {
-				phoneNum = ScannerWrapped.sc.nextLong();
-				ScannerWrapped.sc.nextLine();
-			}
-			else {
-				System.out.println("Try to modify/remove the existing number");
-				return null;
-			}
-		}
-		System.out.println("Enter the email: ");
-		String email = ScannerWrapped.sc.nextLine();
-		System.out.println("Enter the address:");
-		Address add = getAddress();
-		Person p = new Person(name, phoneNum, email, add);
-		return p;
-	}
-	
+
+
 	private Address getAddress() {
 		String[] args = new String[4];
 		System.out.println("Enter the building number: ");
@@ -382,6 +366,7 @@ public class AddressBook {
 	@SuppressWarnings("finally")
 	public static void writeBook(AddressBook book, Path donePath, IOService ioService) throws IOException {
 		if(ioService.equals(IOService.FILE_IO)) {
+			@SuppressWarnings("resource")
 			FileWriter fileWriter = new FileWriter(donePath.toString());
 			try{
 			for(Map.Entry<String, Person> entry : book.contactTable_Name_to_Person.entrySet()){
@@ -405,9 +390,27 @@ public class AddressBook {
 			}
 		}
 	}
-	
-	public static Person extractPerson(String line, String delimiter) {
-		String[] fields = line.split(delimiter);
+
+	public static void writeBook(AddressBook book, Writer writer, IOService ioService) throws IOException {
+		CSVWriter csvWriter = new CSVWriter(writer,
+				CSVWriter.DEFAULT_SEPARATOR,
+				CSVWriter.NO_QUOTE_CHARACTER,
+				CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+				CSVWriter.DEFAULT_LINE_END);
+
+		String[] headerRecord = {"FirstName", "LastName", "PhoneNumber", "Email", "BuildingNumber", "Street", "City", "State", "Country", "Zip"};
+		csvWriter.writeNext(headerRecord);
+		for(Map.Entry<String, Person> entrySet : book.contactTable_Name_to_Person.entrySet())
+			csvWriter.writeNext(new String[]{entrySet.getValue().getFirstName(), entrySet.getValue().getLastName(),
+					String.valueOf(entrySet.getValue().getPhoneNumber()),
+					entrySet.getValue().getEmail(), String.valueOf(entrySet.getValue().getAddress().getBuildingNumber()),
+					entrySet.getValue().getAddress().getStreet(), entrySet.getValue().getAddress().getCity(),
+					entrySet.getValue().getAddress().getState(), entrySet.getValue().getAddress().getCountry(),
+					String.valueOf(entrySet.getValue().getAddress().getZipCode())});
+		csvWriter.close();
+	}
+
+	public static Person extractPerson(String[] fields) {
 		String[] name = new String[2];
 		name[0] = fields[0];
 		name[1] = fields[1];
@@ -421,19 +424,7 @@ public class AddressBook {
 		addressArgs[3] = fields[8];
 		int zipcode = Integer.parseInt(fields[9]);
 		Address add = new Address(buildingNumber, addressArgs, zipcode);
-		return new Person(name, phoneNumber, email, add);
+		return 	new Person(name, phoneNumber, email, add);
 	}
-	
-	public static AddressBook loadBook(String DIR, String bookName, IOService ioService) throws IOException {
-		if(ioService.equals(IOService.FILE_IO)) {
-			List<Person> list = Files.lines(new File(DIR+bookName+".txt").toPath())
-									 .map(line -> line.trim())
-									 .map(line -> extractPerson(line, " "))
-									 .collect(Collectors.toList());
-			AddressBook book = new AddressBook(bookName);
-			list.forEach(e -> book.addContact(e));
-			return book;
-		}
-		return null;
-	}
+
 }
