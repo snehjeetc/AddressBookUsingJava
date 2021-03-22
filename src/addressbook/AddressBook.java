@@ -43,33 +43,52 @@ public class AddressBook {
 	}
 
 	public void fillBook() {
-		int NUMBER_OF_CONTACTS = 3;
-		String[][] names = new String[][] {
-				{"Abc", "Def"},
-				{"Ghi", "Jkl"},
-				{"Mno", "Pqr"}
-		};
-
-		String[] emails = new String[] {"csdfg.com", "ohiog.com", "wetfi.com"};
-		long[] phoneNums = new long[] {9999999999L, 9999999876L, 9999999997L};
-		String[][] addresses = new String[][] {
-				{"mgRoad", "Delhi", "Delhi", "India"},
-				{"skyroad", "Pune", "Maharashtra", "India"},
-				{"qprcity", "Jaipur", "Rajasthan", "India"}
-		};
-
-		int[] buildingNumbers = new int[] {12, 13, 14};
-		int[] zipNumbers = new int[] {120051, 100000, 100003};
-
-		for(int i=0; i<NUMBER_OF_CONTACTS; i++) {
-			Address a = new Address(buildingNumbers[i], addresses[i], zipNumbers[i]);
-			Person p = new Person(names[i], phoneNums[i], emails[i], a);
-			this.addContact(p);
+		char ch = 'Y';
+		while(ch == 'Y') {
+			Person p = getPerson();
+			if(p != null)
+				this.addContact(p);
+			System.out.println("Do you want to add another contact?");
+			ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
 		}
-
 	}
-
-
+	
+	private Person getPerson() {
+		String[] name = new String[2];
+		System.out.println("Enter the First Name: ");
+		name[0] = ScannerWrapped.sc.nextLine();
+		System.out.println("Enter the Last Name: ");
+		name[1] = ScannerWrapped.sc.nextLine();
+		String fullName = name[0] + " " + name[1];
+		if(contactTable_Name_to_Person.containsKey(fullName)) {
+			System.out.println("Name already exists");
+			System.out.println("Try modifying or remove contact");
+			return null;
+		}
+		System.out.println("Enter the phone number: ");
+		long phoneNum = ScannerWrapped.sc.nextLong();
+		ScannerWrapped.sc.nextLine();
+		while(this.search(phoneNum) != null) {
+			System.out.println("Phone number already exists");
+			System.out.println("Do you have a different number?(y/n)");
+			char ch = ScannerWrapped.sc.nextLine().toUpperCase().charAt(0);
+			if(ch == 'Y') {
+				phoneNum = ScannerWrapped.sc.nextLong();
+				ScannerWrapped.sc.nextLine();
+			}
+			else {
+				System.out.println("Try to modify/remove the existing number");
+				return null;
+			}
+		}
+		System.out.println("Enter the email: ");
+		String email = ScannerWrapped.sc.nextLine();
+		System.out.println("Enter the address:");
+		Address add = getAddress();
+		Person p = new Person(name, phoneNum, email, add);
+		return p;
+	}
+	
 	private Address getAddress() {
 		String[] args = new String[4];
 		System.out.println("Enter the building number: ");
